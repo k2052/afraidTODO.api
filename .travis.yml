@@ -1,0 +1,16 @@
+language: ruby
+rvm:
+  - 2.1.1
+services:
+  - mongodb
+before_script:
+  - npm install -g dredd
+script:
+  - bundle exec rake seed
+  - bundle exec rackup &
+  - sleep 3
+  - PID=$!
+  - dredd -h "X-Token: TestKey" apiary.apib http://localhost:4567
+  - RESULT=$?
+  - kill -9 $PID
+  - exit $RESULT
