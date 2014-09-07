@@ -1,0 +1,296 @@
+FORMAT: 1A
+HOST: http://api.afraidTO.do
+
+# Afraid TODO API
+
+The API is is very simple an 
+
+# Group Tasks
+
+Tasks
+
+## Task Collection [/tasks]
+
+### List all Tasks [GET]
+
++ Request (application/json)
+    + Headers
+    
+            X-Token: TokenID
+    + Body
+
+            {}
+    
++ Response 200 (application/json)
+
+            {
+                "tasks": [{
+                    "id": 1,
+                    "text": "Hold a venomous snake by its tail",
+                    "created_at": "1408289000",
+                    "updated_at": "1408289000",
+                    "done": "false",
+                    "href": "https://api.afraidTO.do/tasks/1"
+                }, 
+                {
+                    "id": 2,
+                    "text": "dance in public",
+                    "created_at": "1408289000",
+                    "updated_at": "1408289000",
+                    "done": "false",
+                    "href": "https://api.afraidTO.do/tasks/2"
+                }]
+            }
+
+
+### Create a Task [POST]
+
++ Request (application/json)
+    + Headers
+    
+                X-Token: TokenID
+
+    + Body
+    
+            { 
+                "tasks": [{
+                    "text": "rappel down a waterfall"
+                }]
+            }
+
++ Response 201 (application/json)
+
+        {
+            "tasks": [{
+                "id": 3,
+                "text": "rappel down a waterfall",
+                "created_at": "*",
+                "updated_at": "*",
+                "href": "https://api.afraidTO.do/tasks/1"
+            }, 
+        }
+
+## Task [/tasks/{id}]
+
+A single Task object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the Task to perform action with. Has example value.
+
+### Retrieve a Task [GET]
+
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "tasks": [
+                    {
+                        "id": 1,
+                        "done": "false",
+                        "text": "Hold a venomous snake by its tail",
+                        "created_at": "1408289000",
+                        "updated_at": "1408289000",
+                        "href": "https://api.afraidTO.do/tasks/1"
+                    },
+                ]
+            }
+
+### Update a Task [PUT]
+
++ Request (application/json)
+    + Headers
+    
+            X-Token: TokenID
+
+    + Body
+
+            { 
+                "tasks": [
+                    "done": "true"
+                }]
+            }
+
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "tasks": [
+                    {
+                        "id": 1,
+                        "done": "true",
+                        "text": "Hold a venomous snake by its tail",
+                        "created_at": "1408289000",
+                        "updated_at": "1408289000",
+                        "href": "https://api.afraidTO.do/tasks/1"
+                    },
+                ]
+            }
+
+### Remove a Task [DELETE]
+
++ Response 204
+
+# Group Authenticaiton
+
+## Users Collection [/users]
+
+### Create a User [POST]
+
++ Request (application/json)
+    + Body
+    
+            { 
+                "users": [{
+                    "password": "",
+                    "email":    "bob@2052.me",
+                    "name": "Bob of Wug",
+                    "username": "bobofwug"
+                }]
+            }
+
++ Response 201 (application/json)
+    + Body
+    
+            {
+                "links": {
+                    "users.tokens": {
+                      "href": "https://api.afraidTo.do/authentication/tokens",
+                      "type": "tokens"
+                  }
+                },
+    
+                "users": [{
+                    "uid": "uidd",
+                    "provider": "basic",
+                    "email": "bob",
+                    "username": "b",
+                    "name": "Bob of Wug",
+                    "avatar": "",
+                    "links": {
+                        "tokens": [""]
+                    }
+                }],
+    
+                "linked": {
+                    "tokens": [
+                        {}
+                    ]
+                }
+            }
+
+## User [/users/{id}]
+
+A single User object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action with. Has example value.
+
+### Retrieve a User [GET]
+
++ Request (application/json)
+    + Headers
+    
+            X-Token: TokenID
+
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "users": [{
+                    "uid": "uidd",
+                    "provider": "basic",
+                    "email": "bob",
+                    "username": "bob",
+                    "name": "Bob of Wug",
+                    "avatar": "",
+                    "links": {
+                        "tokens": [""]
+                    }
+                }]
+            }
+
+### Update a User [PUT]
+
++ Request (application/json)
+    + Headers
+    
+            X-Token: TokenID
+
+    + Body
+    
+            { 
+                "users": [
+                    "name": "Bob"
+                }]
+            }
+
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "users": [{
+                    "uid": "uidd",
+                    "provider": "basic",
+                    "email": "bob",
+                    "username": "b",
+                    "name": "Bob",
+                    "avatar": "",
+                    "links": {
+                        "tokens": [""]
+                    }
+                }],
+            }
+
+### Remove a User [DELETE]
+
++ Response 204
+
+## Access Tokens [/authorization/tokens]
+
+### List all Tokens [GET]
+
++ Request (application/json)
+    + Headers
+    
+            X-Token: TokenID
+    + Body
+
+            {}
+
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "tokens": [
+                    {
+                        "access_token": "",
+                        "expires_at": "",
+                        "active": "true",
+                        "application": ""
+                    }
+                ]
+            }
+
+### Create an Access Token [POST]
+
++ Request (application/json)
+    + Headers
+    
+            X-Token: TokenID
+    + Body
+
+            {}
+            
++ Response 201 (application/json)
+    + Body
+    
+            {
+                "tokens": [
+                    {
+                        "access_token": "",
+                        "expires_at": "",
+                        "active": "true",
+                        "application": ""
+                    }
+                ]
+            }
