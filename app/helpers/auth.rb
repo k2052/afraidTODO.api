@@ -2,7 +2,7 @@ module Afraid
 	module Helpers
 		module Auth
 			def authenticated?
-		    error!('Unauthorized', 401) unless current_account
+		    error!('Unauthorized', 401) unless current_user
 			end
 
 			def session
@@ -10,33 +10,32 @@ module Afraid
 			end
 
 	    ##
-	    # Returns the current_account, it's an instance of Account model.
+	    # Returns the current_user, it's an instance of User model.
 	    #
-	    def current_account
-				@current_account ||= login_from_token
-	      @current_account ||= login_from_session
+	    def current_user
+				@current_user ||= login_from_token
+	      @current_user ||= login_from_session
 	    end
 
 		  ##
-		  # Override the current_account, you must provide an instance of Account model.
+		  # Override the current_user, you must provide an instance of User model.
 		  #
 		  # @example
-		  #     set_current_account(Account.authenticate(params[:email], params[:password])
+		  #     set_current_user(User.authenticate(params[:email], params[:password])
 		  #
-		  def set_current_account(account=nil)
-		    session[Afraid.config['session_id']] = account ? account.id : nil
-		    @current_account = account
+		  def set_current_user(user=nil)
+		    session[Afraid.config['session_id']] = user ? user.id : nil
+		    @current_user = user
 		  end
 
 	    def login_from_session
-	      Account.find_by_id(session[Afraid.config['session_id']])
+	      User.find_by_id(session[Afraid.config['session_id']])
 	    end
 
 			def login_from_token
-				return unless params[:token] or request.headers['X-Token']
 				token = Token.find_by_access_token(params[:token] || request.headers['X-Token'])
 				return unless token
-				Account.find token.account_id
+				User.find token.user_id
 			end
 		end
 	end

@@ -1,4 +1,4 @@
-class Account
+class User
   include MongoMapper::Document
   include OmniAuth::Identity::Models::MongoMapper
 
@@ -28,7 +28,8 @@ class Account
   ##
   # Associations
   #
-  has_many :tokens
+  many :tokens
+  many :tasks
   
   ##
   # Validations
@@ -71,17 +72,17 @@ class Account
   end
 
   def self.with_omniauth(auth)
-    create! do |account|
-      account.provider = auth.provider
-      account.uid      = auth.uid
-      account.name     = auth.info.name
-      account.email    = auth.info.email
-      account.username = auth.info.nickname
-      account.avatar   = auth.extra.raw_info.avatar_url || "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(account.email)}?s=#{size}"
+    create! do |user|
+      user.provider = auth.provider
+      user.uid      = auth.uid
+      user.name     = auth.info.name
+      user.email    = auth.info.email
+      user.username = auth.info.nickname
+      user.avatar   = auth.extra.raw_info.avatar_url || "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(user.email)}?s=#{size}"
     end
   end
 
   def create_token
-    Token.create(account: self)
+    Token.create(user: self)
   end
 end
