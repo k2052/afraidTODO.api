@@ -1,7 +1,7 @@
 module Afraid
 	module Api
 		class Tasks < Grape::API
-		  version 'v1', using: :header, vendor: 'tasks'
+		  version 'v1', using: :header, vendor: 'afraidTODO'
 		  format :json
 
       before do
@@ -10,26 +10,12 @@ module Afraid
 
       namespace :tasks do
 			  get do
-			  	TasksSerializer.new(Task.all())
+			  	TasksSerializer.new(current_user.tasks())
 			  end
         
 			  post do
-			  	task = Task.create params[:tasks][0]
-			  	status 201
-			  	TasksSerializer.new([task])
-			  end
-
-			  get ':id' do
-			  	task = Task.find params[:id]
-					error!("Not Found", 404) unless task
-			  	TasksSerializer.new([task])
-			  end 
-
-			  delete ':id' do
-			  	task = Task.find(params[:id])
-					error!("Not Found", 404) unless task
-			  	task.destroy()
-			  	status 204
+			  	task = current_user.tasks.create params[:tasks][0]
+				  taskResp task
 			  end
       end
 		end
