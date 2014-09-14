@@ -1,8 +1,31 @@
 class Task
   include MongoMapper::Document
 
-  key :title, String
+  ##
+  # Keys
+  ##
 
-  validates_presence_of :title
-  attr_accessible :id, :title
+  key :text, String
+  key :done, Boolean, default: false
+
+  ## 
+  # Key Settings
+  ##
+  validates_presence_of :text
+  attr_accessible :id, :text, :done
+  timestamps!
+
+  ##
+  # Associations
+  ##
+  belongs_to :user
+
+  def do
+  	self[:done] = true
+  end
+
+  def do!
+  	self[:done] = true
+	  @save
+  end
 end
