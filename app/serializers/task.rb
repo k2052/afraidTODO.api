@@ -5,9 +5,9 @@ class TaskSerializer < Oat::Serializer
 
   schema do
     type "tasks"
-		link :self, href: '/tasks'
+    link :self, href: '/tasks'
 
-		property :href,       "https://api.afraidTO.do/tasks/#{item.id}"
+    property :href,       "https://api.afraidTO.do/tasks/#{item.id}"
     property :id,         item.id
     property :text,       item.text
     property :done,       item.done

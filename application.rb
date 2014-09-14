@@ -1,19 +1,19 @@
 module Afraid
-	def self.config
-		@config ||= {}
-	end
-
-	def self.config=(config)
-		@config = config
-	end
-
-  def self.env
-  	@env
+  def self.config
+    @config ||= {}
   end
 
-	def self.env=(env)
-		@env = env.to_sym
-	end
+  def self.config=(config)
+    @config = config
+  end
+
+  def self.env
+    @env
+  end
+
+  def self.env=(env)
+    @env = env.to_sym
+  end
 end
 
 require './config/boot'

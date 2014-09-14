@@ -18,7 +18,7 @@ FactoryGirl.definition_file_paths = [
 FactoryGirl.find_definitions
 
 def app
-	Afraid::App.instance
+  Afraid::App.instance
 end
 
 ["support/*.rb" ].each do |path|

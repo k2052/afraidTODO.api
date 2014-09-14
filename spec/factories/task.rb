@@ -4,6 +4,6 @@ FactoryGirl.define do
   end
 
   factory :task_undone, parent: :task do
-  	done false
+    done false
   end 
 end

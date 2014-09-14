@@ -21,11 +21,11 @@ class Task
   belongs_to :user
 
   def do
-  	self[:done] = true
+    self[:done] = true
   end
 
   def do!
-  	self[:done] = true
-	  @save
+    self[:done] = true
+    @save
   end
 end

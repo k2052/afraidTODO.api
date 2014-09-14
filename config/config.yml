@@ -1,8 +1,8 @@
 production:
-	productionval: ""
+  productionval: ""
 
 development:
-	developmentval: ""
+  developmentval: ""
 
 test:
-	testval: ""
+  testval: ""
