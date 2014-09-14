@@ -8,5 +8,6 @@ module Afraid
 
     mount Afraid::Api::Auth
     mount Afraid::Api::Tasks
+    mount Afraid::Api::Task
   end
 end
