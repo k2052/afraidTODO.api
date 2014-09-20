@@ -2,14 +2,18 @@ source 'https://rubygems.org'
 ruby "2.1.1"
 
 gem 'grape', '~> 0.7.0'
-gem 'oat', :git => "git://github.com/ismasan/oat.git"
+gem 'oat', :git => 'git://github.com/ismasan/oat.git'
 gem 'puma'
 gem 'rake'
+gem 'bcrypt-ruby', '~> 3.1.5', require: 'bcrypt'
 gem 'rack-ssl-enforcer'
 gem 'rack-cors', require: 'rack/cors'
 gem 'bson_ext', '~> 1.10.0', :require => 'mongo'
 gem 'mongo_mapper', '~> 0.13.0', :require => 'mongo_mapper'
-gem 'omniauth-identity', require: 'omniauth-identity'
+gem 'mongomapper_ext', git: 'git://github.com/k2052/mongomapper_ext.git'
+gem 'omniauth'
+gem 'omniauth-twitter-access-token'
+gem 'omniauth-oauthio', '~> 0.2.2'
 
 group :development do
   gem 'rerun'
