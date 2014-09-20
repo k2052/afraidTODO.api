@@ -1,24 +1,22 @@
 class User
   include MongoMapper::Document
-  include OmniAuth::Identity::Models::MongoMapper
+  include MongoMapperExt::Archiver
+  attr_accessor :password
 
   ##
   # Keys
   #
 
   ## Basic Details
-  key :username,   String
-  key :first_name, String
-  key :last_name,  String
-  key :read_tos,   Boolean, :default => false
-
-  ## Access
-  key :role,  String, :default => :free
-  key :roles, Array
+  key :username, String
+  key :name,     String
+  key :provider, String, default: "password"
+  key :uid,      String
+  key :avatar,   String
 
   ## Authentication
-  key :email,           String
-  key :password_digest, String
+  key :email,            String
+  key :crypted_password, String
 
   ##
   # Key settings
@@ -34,11 +32,12 @@ class User
   ##
   # Validations
   #
-  validates_presence_of   :email, :role, :username
+  validates_presence_of   :password,                   :if => :password_required
+  validates_length_of     :password, :within => 4..40, :if => :password_required
+  validates_presence_of   :email
   validates_length_of     :email, :within => 3..100
   validates_uniqueness_of :email, :case_sensitive => false
   validates_format_of     :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
-  validates_format_of     :role,  :with => /[A-Za-z]/
   validates_uniqueness_of :username
 
   ##
@@ -47,42 +46,67 @@ class User
 
   after_create :create_token
 
+  # Callbacks
+  before_save :encrypt_password, :if => :password_required
+  before_save :gen_username
+
   ##
   # Methods
   #
-  def name
-    return "#{self.first_name}, #{self.last_name}" unless self.first_name.nil?
-    return ''
-  end
- 
-  def name=(n)
-    n = n.split(",").join(" ").split(" ").uniq
-    self.first_name = n[0] if n.length > 0
-    self.last_name = n[1] if n.length >= 1
-  end
-
-  def role=(role)
-    self[:role] = role
-    self.roles << role unless self.roles.include?(role)
-  end
-
-  def role?(role)
-    return true if self.role.to_sym == role.to_sym
-    return self.roles.include?(role.to_sym)
-  end
-
-  def self.with_omniauth(auth)
-    create! do |user|
+  def self.create_from_auth_hash(auth)
+    create do |user|
+      user.password = auth.password
       user.provider = auth.provider
       user.uid      = auth.uid
       user.name     = auth.info.name
       user.email    = auth.info.email
       user.username = auth.info.nickname
-      user.avatar   = auth.extra.raw_info.avatar_url || "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(user.email)}?s=#{size}"
+      user.avatar   = auth.image || "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(user.email)}?s=#{size}"
     end
+  end
+
+  def self.find_or_create_from_auth_hash(auth)
+    return nil unless auth.provider.present? and auth.uid.present?
+    user = first(:provider => auth.provider, :uid => auth.uid) 
+    return user if user
+    create_from_auth_hash auth
   end
 
   def create_token
     Token.create(user: self)
+  end
+
+  def gen_username
+    if self[:username].blank?
+      self[:username] = self.email
+    end
+  end
+
+
+  ###
+  ## Authentication
+
+  ##
+  # This method is for authentication purpose.
+  #
+  def self.authenticate_with_email_pass(email, password)
+    user = first(:email => /#{Regexp.escape(email)}/i) if email.present?
+    user && user.has_password?(password) ? user : nil
+  end
+
+  def has_password?(password)
+    ::BCrypt::Password.new(crypted_password) == password
+  end
+
+  private
+
+  def encrypt_password
+    self.crypted_password = ::BCrypt::Password.create(password)
+  end
+
+  def password_required
+    if self[:provider] == 'password'
+      crypted_password.blank? || password.present?
+    end
   end
 end
