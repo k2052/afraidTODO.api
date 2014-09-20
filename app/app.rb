@@ -1,7 +1,6 @@
 module Afraid
   class App
     class << self
-
       def instance
         @instance ||= Rack::Builder.new do
           api = Afraid::API
@@ -15,14 +14,26 @@ module Afraid
 
           use Rack::Session::Cookie, secret: ENV['SESSION_COOKIE_SECRET'] || SecureRandom.base64(128)
 
-          if [ 'development', 'test' ].include? ENV['RACK_ENV']
+          if ['development', 'test'].include? ENV['RACK_ENV']
             api.logger.info "Enabling Developer authentication."
-            use OmniAuth::Strategies::Developer
+
+            use OmniAuth::Builder do
+              provider :developer
+            end   
           end
 
-          if ENV['GITHUB_KEY'] && ENV['GITHUB_SECRET']
-            api.logger.info "Enabling Github authentication."
-            use OmniAuth::Strategies::GitHub, ENV['GITHUB_KEY'], ENV['GITHUB_SECRET']
+          if ENV['TWITTER_KEY'] && ENV['TWITTER_SECRET']
+            api.logger.info "Enabling Twitter authentication."
+
+            use OmniAuth::Builder do
+              provider :twitter_access_token, ENV['TWITTER_KEY'], ENV['TWITTER_SECRET']
+            end
+          end
+
+          if ENV['OAUTHIO_KEY'] && ENV['OAUTHIO_SECRET']
+            use OmniAuth::Builder do
+              provider :oauthio, ENV['OAUTHIO_KEY'], ENV['OAUTHIO_SECRET'], :jwt_secret => ENV['OAUTHIO_JWT_SECRET']
+            end
           end
 
           run api
