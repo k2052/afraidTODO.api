@@ -11,23 +11,17 @@ end
 
 task :seed do
   unless Token.find_by_access_token "TestKey"
-    user = User.create(email: "test@test.com", role: 'test', username: 'test', password: 'bob')
+    user = User.create(name: "test", email: "test@test.com", username: 'test', password: 'pass')
     Token.create access_token: "TestKey", user_id: user.id
   end
-   
+
+  User.create name: "test", email: "bob@example.com", password: "pass"
+  User.create email: "twitterUser@example.com", uid: "123545twitter", provider: "twitter" 
+  User.create email: "OAuthIOUser@example.com", uid: "123545github",  provider: "github" 
+
   user = Token.find_by_access_token("TestKey").user
   user.tasks.create(id: "1", text: "Jogging in park")                  unless Task.find "1"
   user.tasks.create(id: "2", text: "Pick-up posters from post-office") unless Task.find "2"
-
-  if defined?(:FactoryGirl)
-    FactoryGirl.definition_file_paths = [
-      File.join(File.dirname(__FILE__), 'spec', 'factories')
-    ]
-    FactoryGirl.find_definitions
-
-    user.tasks << FactoryGirl.build(:task)
-    user.tasks << FactoryGirl.build(:task)
-  end
 end
 
 task :unseed do
