@@ -9,6 +9,7 @@ class Token
   before_create :generate_access_token
   before_create :set_expiration
   belongs_to :user
+  timestamps!
 
   def expired?
     DateTime.now >= self.expires_at
