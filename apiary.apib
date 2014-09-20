@@ -16,7 +16,7 @@ Tasks
 + Request (application/json)
     + Headers
     
-            X-Token: TokenID
+            X-Token: TestKey
     + Body
 
             {}
@@ -42,13 +42,12 @@ Tasks
                 }]
             }
 
-
 ### Create a Task [POST]
 
 + Request (application/json)
     + Headers
     
-                X-Token: TokenID
+            X-Token: TestKey
 
     + Body
     
@@ -60,15 +59,17 @@ Tasks
 
 + Response 201 (application/json)
 
-        {
-            "tasks": [{
-                "id": 3,
-                "text": "rappel down a waterfall",
-                "created_at": "*",
-                "updated_at": "*",
-                "href": "https://api.afraidTO.do/tasks/1"
-            }, 
-        }
+            {
+                "tasks": [{
+                    "id": "*",
+                    "text": "rappel down a waterfall",
+                    "created_at": "*",
+                    "updated_at": "*",
+                    "done": "false",
+                    "href": "https://api.afraidTO.do/tasks/3"
+                }]
+            }
+
 
 ## Task [/tasks/{id}]
 
@@ -79,8 +80,12 @@ A single Task object with all its details
 
 ### Retrieve a Task [GET]
 
++ Request (application/json)
+    + Headers
+    
+            X-Token: TestKey
+
 + Response 200 (application/json)
-    + Body
     
             {
                 "tasks": [
@@ -91,7 +96,7 @@ A single Task object with all its details
                         "created_at": "1408289000",
                         "updated_at": "1408289000",
                         "href": "https://api.afraidTO.do/tasks/1"
-                    },
+                    }
                 ]
             }
 
@@ -105,9 +110,9 @@ A single Task object with all its details
     + Body
 
             { 
-                "tasks": [ {
+                "tasks": [{
                     "done": "true"
-                }}]
+                }]
             }
 
 + Response 200 (application/json)
@@ -122,7 +127,7 @@ A single Task object with all its details
                         "created_at": "1408289000",
                         "updated_at": "1408289000",
                         "href": "https://api.afraidTO.do/tasks/1"
-                    },
+                    }
                 ]
             }
 
@@ -132,21 +137,111 @@ A single Task object with all its details
 
 # Group Authentication
 
-## Users Collection [/users]
+## Sessions [/auth/sessions]
 
-### Create a User [POST]
+### Create a session [POST]
+
+Creates a session
+
++ Request (application/json)
+
++ Response 201 (application/json)
+    + Body
+
+            {
+              "users": [
+                {
+                  "links": {
+                    "self": {
+                      "href": "https://api.afraidTO.do/users/541ce18edf465e054b000001"
+                    },
+                    "tokens": [
+                      "541ce18edf465e054b000002",
+                      "541ce18edf465e054b000003"
+                    ]
+                  },
+                  "name": "bob",
+                  "email": "test@test.com"
+                }
+              ],
+              "linked": {
+                "tokens": [
+                  {
+                    "href": "https://api.afraidTO.do/token/541ce18edf465e054b000002",
+                    "id": "541ce18edf465e054b000002",
+                    "access_token": "4845d193e3dc9914ed306db62d055bc8",
+                    "expires_at": "2014-10-19",
+                    "created_at": "2014-09-20T02:08:14.199Z",
+                    "updated_at": "2014-09-20T02:08:14.199Z"
+                  },
+                  {
+                    "href": "https://api.afraidTO.do/token/541ce18edf465e054b000003",
+                    "id": "541ce18edf465e054b000003",
+                    "access_token": "TestKey",
+                    "expires_at": "2014-10-19",
+                    "created_at": "2014-09-20T02:08:14.201Z",
+                    "updated_at": "2014-09-20T02:08:14.201Z"
+                  }
+                ]
+              }
+            }
+
+## Twitter Access Token [/auth/twitter_access_token/callback?{?token,token_secret,access_token}]
+
+A twitter authentication endpoint. Only utilized internally.
+
++ Parameters
+    + token        (required, string, `qwerty`) ... OAuth Token
+    + token_secret (required, string, `qwerty`) ... OAuth Token Secret
+    + access_token (required, string, `qwerty`) ... OAuth Access Token
+
+### Create a user or authorize via twitter [POST]
 
 + Request (application/json)
     + Body
+
++ Response 201 (application/json)
+    + Body
     
-            { 
+            {
+                "links": {
+                    "users.tokens": {
+                      "href": "https://api.afraidTo.do/authentication/tokens",
+                      "type": "tokens"
+                  }
+                },
+    
                 "users": [{
-                    "password": "",
-                    "email":    "bob@2052.me",
+                    "uid": "uidd",
+                    "email": "bob",
+                    "username": "b",
                     "name": "Bob of Wug",
-                    "username": "bobofwug"
-                }]
+                    "avatar": "",
+                    "links": {
+                        "tokens": [""]
+                    }
+                }],
+    
+                "linked": {
+                    "tokens": [
+                        {}
+                    ]
+                }
             }
+
+## OAuthIO endpoint [/auth/oauthio/{provider}/callback{?code,state}]
+
+An OAuth.io authentication point
+
++ Parameters
+    + provider (required, string, `github`) ... The OAuth.io Provider to use. Obviously must have been enabled on OAuth.io
+    + code     (required, string, `qwerty`) ... OAuth.io Token Code
+    + state    (require, string, `qwerty`)  ... OAuth.io State string
+
+### Create or authorize a user via OAuthIO [POST] 
+
++ Request (application/json)
+    + Body
 
 + Response 201 (application/json)
     + Body
@@ -178,6 +273,55 @@ A single Task object with all its details
                 }
             }
 
+## Users Collection [/users]
+
+### Create a User [POST]
+
++ Request (application/json)
+    + Body
+    
+            { 
+                "users": [{
+                    "password": "lengthypassword",
+                    "email":    "bob@2052.me",
+                    "name": "Bob of Wug",
+                    "username": "bobofwug"
+                }]
+            }
+
++ Response 201 (application/json)
+    + Body
+    
+            {
+              "users": [
+                {
+                  "links": {
+                    "self": {
+                      "href": "https://api.afraidTO.do/users/541ceb1edf465e1b95000002"
+                    },
+                    "tokens": [
+                      "541ceb1edf465e1b95000003"
+                    ]
+                  },
+                  "name": "Bob of Wug",
+                  "email": "bob@2052.me",
+                  "avatar": "http://www.gravatar.com/avatar/bd0261dd040c14db68c8e8b9ce1dbb23?s=4"
+                }
+              ],
+              "linked": {
+                "tokens": [
+                  {
+                    "href": "https://api.afraidTO.do/token/541ceb1edf465e1b95000003",
+                    "id": "541ceb1edf465e1b95000003",
+                    "access_token": "53b345503e5e1bccf7d0d8d15480a2f1",
+                    "expires_at": "2014-10-19",
+                    "created_at": "2014-09-20T02:49:02.430Z",
+                    "updated_at": "2014-09-20T02:49:02.430Z"
+                  }
+                ]
+              }
+            }
+
 ## User [/users/{id}]
 
 A single User object with all its details
@@ -196,17 +340,33 @@ A single User object with all its details
     + Body
     
             {
-                "users": [{
-                    "uid": "uidd",
-                    "provider": "basic",
-                    "email": "bob",
-                    "username": "bob",
-                    "name": "Bob of Wug",
-                    "avatar": "",
-                    "links": {
-                        "tokens": [""]
-                    }
-                }]
+              "users": [
+                {
+                  "links": {
+                    "self": {
+                      "href": "https://api.afraidTO.do/users/541ceb1edf465e1b95000002"
+                    },
+                    "tokens": [
+                      "541ceb1edf465e1b95000003"
+                    ]
+                  },
+                  "name": "Bob of Wug",
+                  "email": "bob@2052.me",
+                  "avatar": "http://www.gravatar.com/avatar/bd0261dd040c14db68c8e8b9ce1dbb23?s=4"
+                }
+              ],
+              "linked": {
+                "tokens": [
+                  {
+                    "href": "https://api.afraidTO.do/token/541ceb1edf465e1b95000003",
+                    "id": "541ceb1edf465e1b95000003",
+                    "access_token": "53b345503e5e1bccf7d0d8d15480a2f1",
+                    "expires_at": "2014-10-19",
+                    "created_at": "2014-09-20T02:49:02.430Z",
+                    "updated_at": "2014-09-20T02:49:02.430Z"
+                  }
+                ]
+              }
             }
 
 ### Update a User [PUT]
@@ -219,7 +379,7 @@ A single User object with all its details
     + Body
     
             { 
-                "users": [
+                "users": [ {
                     "name": "Bob"
                 }]
             }
@@ -228,24 +388,40 @@ A single User object with all its details
     + Body
     
             {
-                "users": [{
-                    "uid": "uidd",
-                    "provider": "basic",
-                    "email": "bob",
-                    "username": "b",
-                    "name": "Bob",
-                    "avatar": "",
-                    "links": {
-                        "tokens": [""]
-                    }
-                }],
+              "users": [
+                {
+                  "links": {
+                    "self": {
+                      "href": "https://api.afraidTO.do/users/541ceb1edf465e1b95000002"
+                    },
+                    "tokens": [
+                      "541ceb1edf465e1b95000003"
+                    ]
+                  },
+                  "name": "Bob",
+                  "email": "bob@2052.me",
+                  "avatar": "http://www.gravatar.com/avatar/bd0261dd040c14db68c8e8b9ce1dbb23?s=4"
+                }
+              ],
+              "linked": {
+                "tokens": [
+                  {
+                    "href": "https://api.afraidTO.do/token/541ceb1edf465e1b95000003",
+                    "id": "541ceb1edf465e1b95000003",
+                    "access_token": "53b345503e5e1bccf7d0d8d15480a2f1",
+                    "expires_at": "2014-10-19",
+                    "created_at": "2014-09-20T02:49:02.430Z",
+                    "updated_at": "2014-09-20T02:49:02.430Z"
+                  }
+                ]
+              }
             }
 
 ### Remove a User [DELETE]
 
 + Response 204
 
-## Access Tokens [/authorization/tokens]
+## Access Tokens [/auth/tokens]
 
 ### List all Tokens [GET]
 
@@ -261,14 +437,24 @@ A single User object with all its details
     + Body
     
             {
-                "tokens": [
-                    {
-                        "access_token": "",
-                        "expires_at": "",
-                        "active": "true",
-                        "application": ""
-                    }
-                ]
+              "tokens": [
+                {
+                  "href": "https://api.afraidTO.do/token/541cedabdf465e226f000002",
+                  "id": "541cedabdf465e226f000002",
+                  "access_token": "27ba5da7b7b9f8638a8e6e5758106791",
+                  "expires_at": "2014-10-19",
+                  "created_at": "2014-09-20T02:59:55.113Z",
+                  "updated_at": "2014-09-20T02:59:55.113Z"
+                },
+                {
+                  "href": "https://api.afraidTO.do/token/541cedabdf465e226f000003",
+                  "id": "541cedabdf465e226f000003",
+                  "access_token": "TestKey",
+                  "expires_at": "2014-10-19",
+                  "created_at": "2014-09-20T02:59:55.114Z",
+                  "updated_at": "2014-09-20T02:59:55.114Z"
+                }
+              ]
             }
 
 ### Create an Access Token [POST]
@@ -285,12 +471,26 @@ A single User object with all its details
     + Body
     
             {
-                "tokens": [
-                    {
-                        "access_token": "",
-                        "expires_at": "",
-                        "active": "true",
-                        "application": ""
-                    }
-                ]
+              "tokens": [
+                {
+                  "href": "https://api.afraidTO.do/token/541cedabdf465e226f000002",
+                  "id": "541cedabdf465e226f000002",
+                  "access_token": "27ba5da7b7b9f8638a8e6e5758106791",
+                  "expires_at": "2014-10-19",
+                  "created_at": "2014-09-20T02:59:55.113Z",
+                  "updated_at": "2014-09-20T02:59:55.113Z"
+                }
+              ]
             }
+
+
+## Token [/tokens/{id}]
+
+A single Token object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the Token to perform action with. Has example value.
+
+### Remove a Token [DELETE]
+
++ Response 204
