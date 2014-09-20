@@ -10,7 +10,10 @@ require File.expand_path("../../application", __FILE__)
 
 RSpec.configure do |conf|
   conf.include Rack::Test::Methods
+  conf.include(OmniAuthMacros)
 end
+
+OmniAuth.config.test_mode = true
 
 FactoryGirl.definition_file_paths = [
   File.join(File.dirname(__FILE__), 'factories')
