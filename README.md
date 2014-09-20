@@ -66,8 +66,10 @@ Then just add your Dokku remote and push.
 
 ### Dredd
 
-    $ bundle exec rake seed 
-    $ foreman start
-    $ dredd -h "X-Token: TestKey" apiary.apib http://localhost:9292
+    $ bundle exec rake unseed && bundle exec rake seed 
+    $ foreman start # in another terminal
+    $ dredd -h "X-Token: TestKey" apiary.apib http://localhost:5000 --hookfiles="*_hooks.coffee"
 
-*Task:* You have to seed before every Dredd test as Dredd will delete sample data it needs for tests to pass. 
+*Note:* 
+You have to seed before every Dredd test as Dredd will delete sample data it needs for tests to pass. 
+Also make sure to utilize Dredd > 0.3.9
