@@ -19,10 +19,24 @@ module Afraid
 
       def taskResp(task)
         if task.valid?
-          TasksSerializer.new([task])  
+          TasksSerializer.new([task])
         else
           error!({errors: task.errors.to_a}, 400)
         end
+      end
+
+      def userResp(user)
+        if user.valid?
+          UsersSerializer.new([user])
+        else
+          error!({errors: user.errors.to_a}, 400)
+        end
+      end
+
+      def omniAuthResp
+        user = User.find_or_create_from_auth_hash auth_hash
+        error!("Not Found", 404) unless user
+        userResp user 
       end
     end
   end

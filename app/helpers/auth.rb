@@ -17,25 +17,33 @@ module Afraid
         @current_user ||= login_from_session
       end
 
-      ##
-      # Override the current_user, you must provide an instance of User model.
-      #
-      # @example
-      #     set_current_user(User.authenticate(params[:email], params[:password])
-      #
-      def set_current_user(user=nil)
+      def set_current_user_session(user=nil)
         session[Afraid.config['session_id']] = user ? user.id : nil
         @current_user = user
       end
 
       def login_from_session
-        User.find_by_id(session[Afraid.config['session_id']])
+        ::User.find_by_id(session[Afraid.config['session_id']])
       end
 
       def login_from_token
         token = Token.find_by_access_token(params[:token] || request.headers['X-Token'])
         return unless token
-        User.find token.user_id
+        ::User.find token.user_id
+      end
+
+      def auth_hash
+        return request.env["omniauth.auth"] if request.env["omniauth.auth"]
+        hash = OmniAuth::AuthHash.new
+
+        if params[:users]
+          hash.provider = 'password'
+          hash.password = params[:users][0]['password']
+          hash.uid      = params[:users][0]['username'] if params[:users][0].include?('username')
+          hash.info     = params[:users][0]
+        end
+
+        hash
       end
     end
   end
