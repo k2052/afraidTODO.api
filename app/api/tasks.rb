@@ -10,7 +10,7 @@ module Afraid
 
       namespace :tasks do
         get do
-          TasksSerializer.new(current_user.tasks())
+          TasksSerializer.new(current_user.tasks.all())
         end
         
         post do

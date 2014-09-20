@@ -3,7 +3,7 @@ module Afraid
     class Task < Grape::API
       version 'v1', using: :header, vendor: 'afraidTODO'
       format :json
-
+  
       before do
         authenticated?
       end
