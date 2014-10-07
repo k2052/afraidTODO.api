@@ -11,7 +11,7 @@ script:
   - bundle exec rackup &
   - sleep 3
   - PID=$!
-  - dredd -h "X-Token: TestKey" apiary.apib http://localhost:9292 --hookfiles="*_hooks.coffee"
+  - dredd -h "X-Token: TestKey" apiary.apib http://localhost:4567 --hookfiles=*_hooks.coffee
   - RESULT=$?
   - kill -9 $PID
   - exit $RESULT
