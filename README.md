@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/k2052/afraidTODO.api.svg)](https://travis-ci.org/k2052/afraidTODO.api) [![Dependency Status](https://gemnasium.com/k2052/afraidTODO.api.svg)](https://gemnasium.com/k2052/afraidTODO.api) [![Code Climate](https://codeclimate.com/github/k2052/afraidTODO.api.png)](https://codeclimate.com/github/k2052/afraidTODO.api)
+[![Build Status](https://travis-ci.org/k2052/afraidTODO.api.svg)](https://travis-ci.org/k2052/afraidTODO.api) [![Dependency Status](https://gemnasium.com/k2052/afraidTODO.api.svg)](https://gemnasium.com/k2052/afraidTODO.api) 
+[![Code Climate](https://codeclimate.com/github/k2052/afraidTODO.api/badges/gpa.svg)](https://codeclimate.com/github/k2052/afraidTODO.api)
 
 API for afraidTO.do
 
