@@ -47,7 +47,7 @@ Just make sure to remove the test key afterwards:
 
     $ bundle exec unseed
 
-*Task*: Unseed will destroy all data!
+*Note*: Unseed will destroy all data!
 
 ### On Dokku
 
