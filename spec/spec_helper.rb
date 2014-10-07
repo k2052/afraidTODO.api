@@ -8,6 +8,12 @@
 ENV['RACK_ENV'] = 'test'
 require File.expand_path("../../application", __FILE__)
 
+["support/*.rb" ].each do |path|
+  Dir["#{File.dirname(__FILE__)}/#{path}"].each do |file|
+    require file
+  end
+end
+
 RSpec.configure do |conf|
   conf.include Rack::Test::Methods
   conf.include(OmniAuthMacros)
@@ -22,10 +28,4 @@ FactoryGirl.find_definitions
 
 def app
   Afraid::App.instance
-end
-
-["support/*.rb" ].each do |path|
-  Dir["#{File.dirname(__FILE__)}/#{path}"].each do |file|
-    require file
-  end
 end
